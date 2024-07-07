@@ -194,7 +194,9 @@ https://www.youtube.com/watch?v=S93hsNFmIcM
 ## react(コメント一覧画面)
 
 - プロフィール画面で自分のコメント一覧を表示する
-![assets/x_tab.png](assets/x_tab.png)
+
+![assets/x_tab.png](../assets/x_tab.png)
+
 - 削除もできるようにすること
 
 ## いいね
