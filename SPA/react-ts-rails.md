@@ -51,6 +51,22 @@ https://www.youtube.com/watch?v=nKybfmmO7JU&list=PL3mtAHT_eRewtt6HPMHFB4TMxkxiEf
 これは任意。自分もやってない。やってできたら逆に教えて欲しい。AWSデプロイ用課題じゃないけどやってみる価値大あり。
 https://zenn.dev/prune/books/28c2d690e11e45
 
+## APIのエンドポイントの動作確認は必ずPostmanを使用すること
+インストール
+https://www.postman.com/downloads/
+使い方
+https://www.youtube.com/watch?v=a9gFPWrDky0
+https://zenn.dev/nameless_sn/articles/postman_tutorial
+
+使い方がわからない場合はclaude3.5 sonnet に聞けば教えてくれる。
+```
+devise-auth-tokenの新規登録のAPIをpostmanでたたいて動作確認したい。手順を詳しく教えて。
+```
+エンドポイントとコードをペーストした後に
+```
+このエンドポイントをpostmanでたたいて動作確認したい。手順を詳しく教えて。
+```
+
 ## 必ず使用しなければならないreactのpackage　実務での経験を元に指定。
 - axios
 - yamada-ui できるだけ活用する。実務では結構UIライブラリを活用している
