@@ -36,6 +36,13 @@ https://qiita.com/kabosu3d/items/c6a634feafb7338793a8
 - ユーザーはツイートをブックマークして保存できる
 - ユーザーは退会できる(削除か論理削除かはどちらでも良い)
 
+## Rails API 必ず使うgem
+```ruby
+gem 'devise_token_auth'        # APIエンドポイント認証
+gem 'active_model_serializers' # APIのフォーマット整形
+```
+https://rooter.jp/programming/rails-activemodelserializers/
+
 ## ヒントやこれを学習すればいい感じになるという参考記事や動画
 devise-token-authのセットアップがこれの通りにすればできる。
 メール送信は含まれてないからそれは自分で調べて。
@@ -76,6 +83,12 @@ https://www.youtube.com/watch?v=f1fysEKNwQA
 - jotai 状態管理ライブラリ
 recoilと似ているので概念をこのyoutubeで学ぶこと。
 https://www.youtube.com/watch?v=S93hsNFmIcM
+
+## Swaggerというものを学習しておく。実務では必須になってくる知識
+https://qiita.com/yuya_sega/items/0b87e8e7d494f6fa3d69
+このディレクトリにswagger.yamlがあるのでそれを参考にエンドポイント5個くらい作ってみる。
+このURLかvscodeの拡張機能で確認すること
+https://editor.swagger.io/
 
 # タスク一覧
 

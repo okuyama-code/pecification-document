@@ -1,0 +1,885 @@
+openapi: 3.1.0
+info:
+  title: AIDAO API
+  version: v1
+  description: |-
+    - [narepon api repository](https://github.com/00AI-labo/narepon-api)
+    - [narepon web repository](https://github.com/00AI-labo/narepon-web)
+servers:
+  - url: http://{defaultHost}
+    variables:
+      defaultHost:
+        default: localhost:4000
+paths:
+  /api/v1/sample/{id}:
+    get:
+      tags:
+        - sample
+      summary: サンプル
+      description: サンプル用のため、実際に叩けません。
+      operationId: sampleUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: name
+          in: query
+          description: サンプル用クエリパラメータ
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - name
+                  - description
+                properties:
+                  name:
+                    type: string
+                    examples: [サンプルデータ]
+                  description:
+                    type: string
+                    examples: [サンプルデータ]
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/UnAuthorizedError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ForbiddenError"
+        "404":
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/NotFoundError"
+        "500":
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/InternalServerError"
+  /api/v1/auth:
+    post:
+      tags:
+        - Auth
+      summary: 新規登録
+      description: 新規登録用。emailとpasswordの両方が必須です。
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                  minLength: 6
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    examples: ["success"]
+                  data:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                        format: email
+                        examples: ["sample@example.com"]
+                      provider:
+                        type: string
+                        examples: ["email"]
+                      uid:
+                        type: string
+                        examples: ["sample@example.com"]
+                      id:
+                        type: integer
+                        examples: [1]
+                      allowPasswordChange:
+                        type: boolean
+                        examples: ["false"]
+                      name:
+                        type: string
+                        examples: [null]
+                      nickname:
+                        type: string
+                        examples: [null]
+                      image:
+                        type: string
+                        examples: [null]
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+        "422":
+          description: Unprocessable Content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    examples: ["error"]
+                  errors:
+                    type: object
+                    properties:
+                      password:
+                        type: array
+                        items:
+                          type: string
+                        examples:
+                          - [
+                              "を入力してください",
+                              "は6文字以上で入力してください",
+                            ]
+                      email:
+                        type: array
+                        items:
+                          type: string
+                        examples:
+                          - [
+                              "を入力してください",
+                              "は有効ではありません",
+                              "はすでに存在します",
+                            ]
+                      fullMessages:
+                        type: array
+                        items:
+                          type: string
+                        examples:
+                          - [
+                              "Passwordを入力してください",
+                              "Passwordは6文字以上で入力してください",
+                              "Emailは有効ではありません",
+                              "Emailを入力してください",
+                              "Emailはすでに存在します",
+                            ]
+                required:
+                  - status
+                  - errors
+        "500":
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/InternalServerError"
+  /api/v1/auth/sign_in:
+    post:
+      tags:
+        - Auth
+      summary: ログイン
+      description: 新規登録用。emailとpasswordの両方が必須です。
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                        format: email
+                        examples: ["sample@example.com"]
+                      provider:
+                        type: string
+                        examples: ["email"]
+                      uid:
+                        type: string
+                        examples: ["sample@example.com"]
+                      id:
+                        type: integer
+                        examples: [1]
+                      allowPasswordChange:
+                        type: boolean
+                        examples: ["false"]
+                      name:
+                        type: string
+                        examples: [null]
+                      nickname:
+                        type: string
+                        examples: [null]
+                      image:
+                        type: string
+                        examples: [null]
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    examples: ["false"]
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                    examples:
+                      - [
+                          "ログイン用の認証情報が正しくありません。再度お試しください。",
+                        ]
+        "500":
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/InternalServerError"
+  /api/v1/auth/sign_out:
+    delete:
+      tags:
+        - Auth
+      summary: ログアウト
+      description: ログアウト用 認証が必要です。
+      operationId: logoutUser
+      security:
+        - accessToken: []
+        - client: []
+        - uid: []
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    examples: ["true"]
+        "404":
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    examples: ["false"]
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                    examples:
+                      - ["ユーザーが見つからないか、ログインしていません。"]
+        "500":
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/InternalServerError"
+  /api/v1/auth/password:
+    put:
+      tags:
+        - Auth
+      summary: パスワード更新
+      description: ユーザーのパスワードを更新します。認証が必要です。
+      operationId: updatePassword
+      security:
+        - accessToken: []
+        - client: []
+        - uid: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - password
+                - passwordConfirmation
+              properties:
+                password:
+                  type: string
+                  format: password
+                  minLength: 6
+                passwordConfirmation:
+                  type: string
+                  format: password
+                  minLength: 6
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    examples: [true]
+                  data:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                        format: email
+                        examples: ["sample@example.com"]
+                      provider:
+                        type: string
+                        examples: ["email"]
+                      uid:
+                        type: string
+                        examples: ["sample@example.com"]
+                      id:
+                        type: integer
+                        examples: [1]
+                      allowPasswordChange:
+                        type: boolean
+                        examples: [false]
+                      name:
+                        type: string
+                        examples: [null]
+                      nickname:
+                        type: string
+                        examples: [null]
+                      image:
+                        type: string
+                        examples: [null]
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                  message:
+                    type: string
+                    examples: ["パスワードの更新に成功しました。"]
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    examples: [false]
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                    examples:
+                      - ["Unauthorized"]
+        "422":
+          description: Unprocessable Content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    examples: [false]
+                  errors:
+                    type: object
+                    properties:
+                      passwordConfirmation:
+                        type: array
+                        items:
+                          type: string
+                        examples:
+                          - ["とPasswordの入力が一致しません"]
+                      fullMessages:
+                        type: array
+                        items:
+                          type: string
+                        examples:
+                          - [
+                              "Password confirmationとPasswordの入力が一致しません",
+                            ]
+        "500":
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/InternalServerError"
+  /api/v1/questions:
+    post:
+      tags:
+        - Question
+      summary: 質問を新規作成
+      description: 質問を新規作成する時のエンドポイント。
+      operationId: createQuestion
+      security:
+        - accessToken: []
+        - client: []
+        - uid: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                categoryId:
+                  type: integer
+                  examples: [1]
+                title:
+                  type: string
+                  examples: [タイトル]
+                content:
+                  type: string
+                  examples: [内容]
+                status:
+                  type: string
+                  enum: [draft, open]
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CreatedWithId"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/UnAuthorizedError"
+        "422":
+          description: UnprocessableEntity
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/UnprocessableEntity"
+        "500":
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/InternalServerError"
+  /api/v1/questions/search:
+    get:
+      tags:
+        - Question
+      summary: 質問の検索結果
+      description: 質問の検索結果とみんなの質問ページで質問を表示するためのエンドポイント。25件ずつ取得できる。
+      operationId: getSearch
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: order
+          in: query
+          required: false
+          description: created_at desc, answer_count desc, good_count desc, bookmark_count desc
+          schema:
+            type: string
+        - name: kind
+          in: query
+          required: false
+          description: unanswered, unresolved, resolved
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/QuestionCard"
+        "500":
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/InternalServerError"
+components:
+  securitySchemes:
+    accessToken:
+      type: apiKey
+      in: header
+      name: access-token
+    client:
+      type: apiKey
+      in: header
+      name: client
+    uid:
+      type: apiKey
+      in: header
+      name: uid
+  schemas:
+    UnAuthorizedError:
+      type: object
+      properties:
+        error:
+          type: string
+          examples: [Unauthorized]
+        message:
+          type: string
+          examples: [ログインしてください]
+    ForbiddenError:
+      type: object
+      properties:
+        error:
+          type: string
+          examples: [Forbidden]
+        message:
+          type: string
+          examples: [権限がありません]
+    NotFoundError:
+      type: object
+      properties:
+        error:
+          type: string
+          examples: [NotFound]
+        message:
+          type: string
+          examples: [対象のデータが存在しません]
+    UnprocessableEntity:
+      type: object
+      properties:
+        error:
+          type: string
+          examples: [UnprocessableEntity]
+        message:
+          type: string
+          examples: [送信内容が適切ではありません]
+    InternalServerError:
+      type: object
+      properties:
+        error:
+          type: string
+          examples: [InternalServerError]
+        message:
+          type: string
+          examples: [サーバーエラー]
+    QuestionCard:
+      type: array
+      items:
+        type: object
+        required:
+          - id
+          - title
+          - content
+          - resolvedFlag
+          - goodCount
+          - answerCount
+          - bookmarkCount
+          - answerRequestCount
+          - createdAt
+          - user
+          - category
+        properties:
+          id:
+            type: integer
+            examples: [1]
+          title:
+            type: string
+            examples: [質問のタイトル]
+          content:
+            type: string
+            examples: [質問の内容]
+          resolvedFlag:
+            type: boolean
+            examples: [false]
+          goodCount:
+            type: integer
+            examples: [1]
+          gooded:
+            type: boolean
+            examples: [true, false]
+            description: すでにいいねをしているかどうか
+          bookmarkCount:
+            type: integer
+            examples: [1]
+          bookmarked:
+            type: boolean
+            examples: [true, false]
+            description: すでにブックマークをしているかどうか
+          answerRequestCount:
+            type: integer
+            examples: [1]
+          answerRequested:
+            type: boolean
+            examples: [true, false]
+            description: すでに回答が欲しいをしているかどうか
+          answerCount:
+            type: integer
+            examples: [1]
+          createdAt:
+            type: string
+            examples: [2024/01/01 12:34]
+          user:
+            "$ref": "#/components/schemas/User"
+          category:
+            "$ref": "#/components/schemas/Category"
+    User:
+      type: object
+      required:
+        - id
+        - displayName
+        - imageUrl
+      properties:
+        id:
+          type: integer
+          examples: [1]
+        displayName:
+          type: string
+          examples: [表示名]
+        imageUrl:
+          type: string
+          examples: [URL]
+    MentionedUser:
+      type: object
+      required:
+        - id
+        - displayName
+      properties:
+        id:
+          type: integer
+          examples: [1]
+        displayName:
+          type: string
+          examples: [表示名]
+    Category:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          examples: [1]
+        name:
+          type: string
+          examples: [カテゴリー名]
+    Profile:
+      type: object
+      required:
+        - id
+        - displayName
+        - email
+        - totalPoint
+        - followCount
+        - followerCount
+        - imageUrl
+        - company
+      properties:
+        id:
+          type: integer
+          examples: [1]
+        displayName:
+          type: string
+          examples: [表示名]
+        email:
+          type: string
+          examples: [sample@example.com]
+        position:
+          type: string
+          examples: [役職]
+        totalPoint:
+          type: integer
+          examples: [1]
+        followCount:
+          type: integer
+          examples: [1]
+        followerCount:
+          type: integer
+          examples: [1]
+        selfIntroduction:
+          type: string
+          examples: [自己紹介]
+        imageUrl:
+          type: string
+          examples: [URL]
+        company:
+          type: object
+          required:
+            - id
+            - name
+          properties:
+            id:
+              type: integer
+              examples: [1]
+            name:
+              type: string
+              examples: [会社名]
+        careers:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - detail
+              - startYear
+              - endYear
+              - memo
+            properties:
+              id:
+                type: integer
+                examples: [1]
+              detail:
+                type: string
+                examples: [会社名]
+              startYear:
+                type: integer
+                examples: [1996]
+              endYear:
+                type: integer
+                examples: [2012]
+              memo:
+                type: string
+                examples: [役職]
+        academicBackgrounds:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - detail
+              - startYear
+              - endYear
+              - memo
+            properties:
+              id:
+                type: integer
+                examples: [1]
+              detail:
+                type: string
+                examples: [詳細]
+              startYear:
+                type: integer
+                examples: [1996]
+              endYear:
+                type: integer
+                examples: [2000]
+              memo:
+                type: string
+                examples: [中退]
+        prefectures:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - name
+            properties:
+              id:
+                type: integer
+                examples: [1]
+              name:
+                type: string
+                examples: [都道府県]
+        interestedCategories:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - name
+            properties:
+              id:
+                type: integer
+                examples: [1]
+              name:
+                type: string
+                examples: [気になる分野]
+        knowledgeableCategories:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - name
+            properties:
+              id:
+                type: integer
+                examples: [1]
+              name:
+                type: string
+                examples: [詳しい分野]
+    Success:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          examples: [Success]
+    Created:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          examples: [Created]
+    CreatedWithId:
+      type: object
+      required:
+        - message
+        - id
+      properties:
+        message:
+          type: string
+          examples: [Created]
+        id:
+          type: integer
+          examples: [1]
